@@ -13,9 +13,10 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class User {
     String email;
-    Set<String> gameRooms = new HashSet<>();
+
 
     @Override
     public boolean equals(Object o) {
