@@ -2,12 +2,13 @@
 <head>
     <title>Chat WebSocket</title>
 
-    <script src="resources/js/sockjs-0.3.4.js"></script>
-    <script src="resources/js/stomp.js"></script>
+    <script src="js/sockjs-0.3.4.js"></script>
+    <script src="js/stomp.js"></script>
 
     <script type="text/javascript">
 
         var stompClient = null;
+        var chatId = null;
 
         function setConnected(connected) {
 
@@ -19,14 +20,17 @@
 
         function connect() {
 
-            var socket = new SockJS('/chat');
+           chatId = document.getElementById('chatId').value;
+           console.log(chatId);
+
+            var socket = new SockJS('/game');
             stompClient = Stomp.over(socket);
 
             stompClient.connect({}, function(frame) {
 
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/messages', function(messageOutput) {
+                stompClient.subscribe('/topic/'+chatId, function(messageOutput) {
 
                     showMessageOutput(JSON.parse(messageOutput.body));
                 });
@@ -47,10 +51,11 @@
 
             var from = document.getElementById('from').value;
             var text = document.getElementById('text').value;
-            stompClient.send("/app/chat", {}, JSON.stringify({'from':from, 'text':text}));
+            stompClient.send("/app/game", {}, JSON.stringify({'from':from, 'text':text, 'chatId': chatId}));
         }
 
         function showMessageOutput(messageOutput) {
+            console.log('HELLO');
 
             var response = document.getElementById('response');
             var p = document.createElement('p');
@@ -70,6 +75,7 @@
 
     <div>
         <input type="text" id="from" placeholder="Choose a nickname"/>
+        <input type="text" id="chatId" placeholder="Choose a chat"/>
     </div>
     <br />
     <div>
