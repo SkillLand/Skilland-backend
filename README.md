@@ -1,14 +1,14 @@
 # Skilland-backend
 
-Чтобы запустить проект, необходимо склонировать репозиторий. Далее запустить сервис базы данных выполнив команду "docker-compose up db"
-в терминале корневой дирректории проекта. 
-Далее запустить сам проект DemoApplication.
+To run the project, you need to clone the repository. Next, start the database service by running command "docker-compose up db"
+in the terminal of the main project directory.
+Next, start the DemoApplication project itself.
 
-смотреть API на http://localhost:8080/swagger-ui/index.html
+check API at http://localhost:8080/swagger-ui/index.html
 
-Весь новый функционал будет отображаться посредством пополнения endpoints , которые можно увидеть на сваггере. Для этого переодически
-запрашивать "git pull".
+All new functionality will be through the replenishment of the endpoints that can be seen on the swagger. To do this, periodically
+request "git pull".
 
-Общение клиент-сервис проиходит через HTTP и Websockets. Websockets используются только во время процесса игры для обмена текущим состоянием игры между
-всеми учасниками. Тестирование websockets осуществляется по URI http://localhost:8080/ (пока что добавлены базовые функции). Тестирование HTTP запросов 
-на http://localhost:8080/swagger-ui/index.html
+Communication client-service takes place via HTTP and Websockets. Websockets are only used during gameplay to exchange the current game state between
+all the participants. Testing websockets is done using the URI http://localhost:8080/(basic functionality has been added so far). Testing HTTP requests
+to http://localhost:8080/swagger-ui/index.html
