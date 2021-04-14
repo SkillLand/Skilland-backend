@@ -1,4 +1,4 @@
 package com.skilland.game.demo.repository;
 
-public class FileSystemRepository {
+public interface StudentRepository {
 }

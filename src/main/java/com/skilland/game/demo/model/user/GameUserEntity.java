@@ -1,6 +1,5 @@
-package com.skilland.game.demo.model;
+package com.skilland.game.demo.model.user;
 
-import com.skilland.game.demo.model.gameroom.Course;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,17 +8,16 @@ import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "users")
-public class GameUser {
+@Entity(name = "account")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "DB_TYPE")
+public abstract class GameUserDAO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +27,7 @@ public class GameUser {
     @Column(nullable = false, name = "email", unique = true)
     String email;
 
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "full_name", nullable = false)
     private String firstName;
 
     @Column(nullable = false)
@@ -37,6 +35,9 @@ public class GameUser {
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
+
+    @Column(name = "photo")
+    private String photo;
 
     @ManyToMany
     @JoinTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -46,15 +47,12 @@ public class GameUser {
     private Map<KnownAuthority, UserAuthority> authorities = new EnumMap<>(KnownAuthority.class);
 
 
-    @ManyToMany(mappedBy = "students")
-    private List<Course> courses;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GameUser gameUser = (GameUser) o;
-        return email.equals(gameUser.email);
+        GameUserDAO gameUserDAO = (GameUserDAO) o;
+        return email.equals(gameUserDAO.email);
     }
 
     @Override
