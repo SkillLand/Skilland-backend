@@ -1,8 +1,6 @@
-package com.skilland.game.demo.model;
+package com.skilland.game.demo.model.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.skilland.game.demo.model.user.GameUser;
-import com.skilland.game.demo.model.user.KnownAuthority;
 
 import java.time.Instant;
 import java.util.EnumSet;
@@ -21,7 +19,7 @@ public class UserResponse {
 
     private Set<KnownAuthority> authorities;
 
-    public static UserResponse fromUser(GameUser user){
+    public static UserResponse fromUser(GameUserEntity user){
         var response = new UserResponse();
         response.id = user.getId();
         response.email = user.getEmail();
