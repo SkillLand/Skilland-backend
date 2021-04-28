@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class Subject {
+public class SubjectEntity {
 
     private String title;
 

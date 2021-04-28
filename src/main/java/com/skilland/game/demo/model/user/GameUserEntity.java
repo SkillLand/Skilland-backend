@@ -14,10 +14,10 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "account")
+@Entity(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DB_TYPE")
-public abstract class GameUserDAO {
+public abstract class GameUserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,8 +51,8 @@ public abstract class GameUserDAO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GameUserDAO gameUserDAO = (GameUserDAO) o;
-        return email.equals(gameUserDAO.email);
+        GameUserEntity gameUserEntity = (GameUserEntity) o;
+        return email.equals(gameUserEntity.email);
     }
 
     @Override

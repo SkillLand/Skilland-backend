@@ -1,4 +1,10 @@
 package com.skilland.game.demo.model.gameroom.req;
 
-public class AddingStudentToCourse {
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class AddingStudentToCourseRequest {
+    private long courseId;
 }

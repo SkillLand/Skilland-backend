@@ -6,14 +6,16 @@ import lombok.Setter;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@DiscriminatorValue("ST")
+@DiscriminatorValue("STUD")
 @Getter
 @Setter
-public class StudentDAO extends GameUserDAO{
-    @ManyToMany(mappedBy = "students")
-    private List<CourseEntity> coursesStudents;
+public class StudentEntity extends GameUserEntity {
+    @ManyToMany(mappedBy = "students", fetch = FetchType.EAGER)
+    private Set<CourseEntity> coursesStudents;
 }

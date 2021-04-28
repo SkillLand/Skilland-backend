@@ -1,8 +1,6 @@
-package com.skilland.game.demo.model;
+package com.skilland.game.demo.model.user;
 
 
-import com.skilland.game.demo.model.user.GameUser;
-import com.skilland.game.demo.model.user.KnownAuthority;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -23,7 +21,7 @@ public class UserAuthority {
     private KnownAuthority value;
 
     @ManyToMany(mappedBy = "authorities")
-    private List<GameUser> users;
+    private List<GameUserEntity> users;
 
     public Integer getId() {
         return id;
@@ -41,11 +39,11 @@ public class UserAuthority {
         this.value = value;
     }
 
-    public List<GameUser> getUsers() {
+    public List<GameUserEntity> getUsers() {
         return users;
     }
 
-    public void setUsers(List<GameUser> users) {
+    public void setUsers(List<GameUserEntity> users) {
         this.users = users;
     }
 

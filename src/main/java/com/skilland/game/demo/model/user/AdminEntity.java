@@ -4,6 +4,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("METH")
-public class AdminEntity extends GameUserDAO{
+@DiscriminatorValue("ANDM")
+public class AdminEntity extends GameUserEntity {
 }

@@ -26,7 +26,7 @@
 
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/456', function(messageOutput) {
+                stompClient.subscribe('/topicEntity/456', function(messageOutput) {
 
                     showMessageOutput(JSON.parse(messageOutput.body));
                 });

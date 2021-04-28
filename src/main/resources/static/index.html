@@ -30,7 +30,7 @@
 
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/'+chatId, function(messageOutput) {
+                stompClient.subscribe('/topicEntity/'+chatId, function(messageOutput) {
 
                     showMessageOutput(JSON.parse(messageOutput.body));
                 });

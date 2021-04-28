@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
-public class GameTest {
+public class GameEntityTest {
 
 
     UserRepository userRepository;
@@ -39,6 +39,8 @@ public class GameTest {
 
     TeacherRepository teacherRepository;
 
+    GameFileStorage gameFileStorage;
+
 
     @Before
     public void setUp(){
@@ -49,10 +51,12 @@ public class GameTest {
         gameRepository = mock(GameRepository.class);
         subjectTopicRepository = new SubjectTopicRepository();
         subjectTopicRepository.setPathStart("src/test/recourses/Предметы");
+        gameFileStorage = new GameFileStorage();
+        gameFileStorage.setPathStart("src/test/resources/Игры");
         studentRepository = mock(StudentRepository.class);
         teacherRepository = mock(TeacherRepository.class);
         userService = new UserService(userRepository, authorityRepository, passwordEncoder,
-                gameRepository, courseRepository, subjectTopicRepository, studentRepository, teacherRepository);
+                gameRepository, courseRepository, gameFileStorage, subjectTopicRepository, studentRepository, teacherRepository);
     }
 
     @Test
@@ -97,7 +101,7 @@ public class GameTest {
     }
 
     @Test
-    public void getSubjectAndTopicTests(){
+    public void getSubjectAndTopicTests() throws IOException {
         String presentSubjectName = "Алгебра";
         String absentSubjectName = "123Алгебра";
         SubjectEntity subjectEntity = this.subjectTopicRepository.findSubjectByName(presentSubjectName).get();
@@ -111,16 +115,6 @@ public class GameTest {
         assertThat(this.subjectTopicRepository.existsTopicByName(presentSubjectName, absentTopicName)).isEqualTo(false);
         assertThat(this.subjectTopicRepository.existsTopicByName(absentSubjectName, absentTopicName)).isEqualTo(false);
 
-    }
-
-    @Test
-    public void getTaskTest() throws IOException {
-        String number = "1";
-        String level = "1";
-        String presentSubjectName = "Алгебра";
-        String presentTopicName = "Многочлены";
-        TaskEntity taskEntity = this.subjectTopicRepository.findTaskByNameAndLevel(presentSubjectName, presentTopicName, level, "2").get();
-        System.out.println(taskEntity);
     }
 
 

@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+
+  db:
+    image: postgres:latest
+    container_name: bankappdbpostgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 3523
+      POSTGES_USER: postgres
+      POSTGRES_DB: skilland_db
+    ports:
+      - 5432:5432
+
+
+  bank_service:
+    build:
+      context: .
+    container_name: bank_app
+    environment:
+      DB_DB_HOST: jdbc:postgresql://localhost:5432/skilland_db
+      DB_DB_USER: root
+      DB_DB_PASSWORD: 3523
+      DB_DB_NAME: bankapp_db
+      CARD_CHECKING_SECURITY_JWT_SECRET: GnBGcKJvQJ93KCVVxXxkYL7RNWqYACCaMT9pNXmx7R949KKnrFsad3GVD3VkK3Qw
+      CARD_CHECKING_SECURITY_ADMINS_SONIABOND_PASSWORD: password
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
+
+volumes:
+  db-data:
+    driver: local

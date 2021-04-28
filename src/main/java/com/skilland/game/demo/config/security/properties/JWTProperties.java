@@ -1,4 +1,4 @@
-package com.skilland.game.demo.config.security;
+package com.skilland.game.demo.config.security.properties;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;

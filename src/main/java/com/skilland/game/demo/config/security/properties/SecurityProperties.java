@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Map;
 
 @Validated
-@ConfigurationProperties(prefix = "card-checking.security")
+@ConfigurationProperties(prefix = "game.security")
 public class SecurityProperties {
 
     @Valid

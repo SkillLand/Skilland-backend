@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class Topic {
+public class TopicEntity {
 
     private String subjectName;
 

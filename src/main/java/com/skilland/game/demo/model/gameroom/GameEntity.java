@@ -3,9 +3,11 @@ package com.skilland.game.demo.model.gameroom;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Game {
+public class GameEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,28 +25,18 @@ public class Game {
     @Column(name="title")
     private String title;
 
-   /* @Column(name = "durability")
-    private int durabilityMinutes;
-
-    @Column(name = "max_task_level")
-    private int maxTaskLevel;
-
-    @Column(name = "min_task_level")
-    private int minTaskLevel;
-
     @Column(name = "start_date")
-    private String startDate;*/
+    private Timestamp dateTime;
 
-    @ManyToMany
-    @JoinTable(name = "games_courses", joinColumns = @JoinColumn(name = "game_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
-    private Set<CourseEntity> course = new HashSet<>();
 
-   /* @ManyToMany
-    @JoinTable(name = "games_topics", joinColumns = @JoinColumn(name = "game_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "id"))
-    private Set<Topic> topics = new HashSet<>();*/
+    @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false)
+    private CourseEntity course;
 
-    public Game() {
+    @Column(name = "subject_name")
+    private String subjectName;
+
+
+    public GameEntity() {
     }
 }

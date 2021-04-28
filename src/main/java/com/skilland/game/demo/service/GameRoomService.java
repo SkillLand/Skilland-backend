@@ -1,18 +1,17 @@
 package com.skilland.game.demo.service;
 
-import com.skilland.game.demo.model.User;
+import com.skilland.game.demo.model.user.GameUserEntity;
+import com.skilland.game.demo.model.user.StudentEntity;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @Service
 public class GameRoomService {
 
-    private final Set<User> users = new HashSet();
+    private final Set<GameUserEntity> gameUserEntities = new HashSet();
 
     private final Set<String>roomIds = new HashSet();
 
@@ -34,24 +33,24 @@ public class GameRoomService {
         return newRoomId;
     }
 
-    public User addUser(String email){
-        User user = new User();
-        user.setEmail(email);
-        users.add(user);
-        return user;
+    public GameUserEntity addUser(String email){
+        GameUserEntity gameUserEntity = new StudentEntity();
+        gameUserEntity.setEmail(email);
+        gameUserEntities.add(gameUserEntity);
+        return gameUserEntity;
     }
 
-    public User addUserToRoom(String email, String roomId){
-        User user = new User();
-        user.setEmail(email);
-        if(users.contains(user)){
-            User finalUser = user;
-            user = users.stream().filter((finalUser::equals)).findFirst().get();
+    /*public GameUser addUserToRoom(String email, String roomId){
+        GameUser gameUser = new GameUser();
+        gameUser.setEmail(email);
+        if(gameUsers.contains(gameUser)){
+            GameUser finalGameUser = gameUser;
+            gameUser = gameUsers.stream().filter((finalGameUser::equals)).findFirst().get();
         }
-        if (user.getGameRooms().contains(roomId)){
-            return user;
+        if (gameUser.getGameRooms().contains(roomId)){
+            return gameUser;
         }
-        user.getGameRooms().add(roomId);
-        return user;
-    }
+        gameUser.getGameRooms().add(roomId);
+        return gameUser;
+    }*/
 }

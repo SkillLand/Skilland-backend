@@ -1,6 +1,8 @@
-package com.skilland.game.demo.model.user;
+package com.skilland.game.demo.model.user.resp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.skilland.game.demo.model.user.GameUserEntity;
+import com.skilland.game.demo.model.user.KnownAuthority;
 
 import java.time.Instant;
 import java.util.EnumSet;

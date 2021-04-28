@@ -6,15 +6,16 @@ import lombok.Setter;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@DiscriminatorValue("TEACH")
+@DiscriminatorValue("TECH")
 @Getter
 @Setter
-public class TeacherDAO extends GameUserDAO{
-    @OneToMany(mappedBy = "teacher")
+public class TeacherEntity extends GameUserEntity {
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
     private Set<CourseEntity> coursesTeachers = new HashSet<>();
 }

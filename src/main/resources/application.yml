@@ -1,0 +1,27 @@
+server:
+  http2:
+    enabled: true
+  error:
+    include-message: always
+    include-binding-errors: always
+
+
+game:
+  security:
+    jwt:
+      secret: GnBGcKJvQJ93KCVVxXxkYL7RNWqYACCaMT9pNXmx7R949KKnrFsad3GVD3VkK3Qw
+      expireIn: 3600000
+    admins:
+      soniabond:
+        email: soniabondarenko1@gmail.com
+        password: password
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/skilland_db
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: 3523
+  jpa:
+    open-in-view: false
+    show-sql: true

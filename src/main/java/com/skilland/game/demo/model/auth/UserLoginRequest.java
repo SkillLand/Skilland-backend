@@ -1,4 +1,4 @@
-package com.skilland.game.demo.model;
+package com.skilland.game.demo.model.auth;
 
 
 import com.fasterxml.jackson.annotation.JsonAlias;
