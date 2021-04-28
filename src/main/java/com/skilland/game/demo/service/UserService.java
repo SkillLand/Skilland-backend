@@ -56,7 +56,6 @@ public class UserService implements UserDetailsService {
 
     private final TeacherRepository teacherRepository;
 
-    @Autowired
     private Map<String, DataReceiverByUserAuthority> dataReceiverByUserAuthorityMap;
 
 
@@ -64,7 +63,7 @@ public class UserService implements UserDetailsService {
     public UserService(UserRepository userRepository, UserAuthorityRepository authorityRepository,
                        PasswordEncoder passwordEncoder, GameRepository gameRepository,
                        CourseRepository courseRepository, GameFileStorage gameFileStorage, SubjectTopicRepository subjectTopicRepository,
-                       StudentRepository studentRepository, TeacherRepository teacherRepository) {
+                       StudentRepository studentRepository, TeacherRepository teacherRepository, Map<String, DataReceiverByUserAuthority> dataReceiverByUserAuthorityMap) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.passwordEncoder = passwordEncoder;
@@ -74,6 +73,7 @@ public class UserService implements UserDetailsService {
         this.subjectTopicRepository = subjectTopicRepository;
         this.studentRepository = studentRepository;
         this.teacherRepository = teacherRepository;
+        this.dataReceiverByUserAuthorityMap = dataReceiverByUserAuthorityMap;
     }
 
     @Transactional
@@ -192,10 +192,16 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public GameResponse createNewGame(String teacherEmail, String courseName, String [] topicsNames, String gameName,
-                                      String subjectName, int durabilityMinutes, int maxTaskLevel,
-                                      int minTaskLevel, String startDate) throws IOException {
+    public GameResponse createNewGame(String teacherEmail, CreateGameRequest request) throws IOException {
 
+        String courseName = request.getCourseName();
+        String [] topicsNames = request.getTopicNames();
+        String gameName = request.getGameName();
+        String subjectName = request.getSubjectName();
+        int durabilityMinutes = request.getGameDurabilityMinutes();
+        int maxTaskLevel = request.getMaxTaskLevel();
+        int minTaskLevel = request.getMinTaskLevel();
+        String startDate = request.getStartDate();
         if(!subjectTopicRepository.existsSubjectByName(subjectName)){
         throw GameDataException.subjectNotFound(subjectName);
         }

@@ -59,6 +59,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         var authentication = getAuthentication(req);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println("AUTH" + SecurityContextHolder.getContext().getAuthentication());
         chain.doFilter(req, res);
 
     }
@@ -88,6 +89,10 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 .map(KnownAuthority::valueOf)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(KnownAuthority.class)));
 
-        return new UsernamePasswordAuthenticationToken(email, null, authorities);
+        System.out.println("UsernamePasswordAuthenticationToken");
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, null, authorities);
+        System.out.println(authenticationToken);
+        System.out.println(authenticationToken.getAuthorities());
+        return authenticationToken;
     }
 }

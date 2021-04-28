@@ -8,12 +8,15 @@ import com.skilland.game.demo.model.gameroom.req.CreateGameRequest;
 import com.skilland.game.demo.model.gameroom.resp.CourseResponse;
 import com.skilland.game.demo.model.gameroom.resp.GameResponse;
 import com.skilland.game.demo.model.gameroom.resp.NewCourseResponse;
+import com.skilland.game.demo.model.user.KnownAuthority;
 import com.skilland.game.demo.model.user.resp.UserResponse;
 import com.skilland.game.demo.model.user.request.SaveUserRequest;
 import com.skilland.game.demo.service.PrebuiltDataService;
 import com.skilland.game.demo.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +24,7 @@ import javax.sound.midi.Soundbank;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -58,13 +62,13 @@ public class UserController {
     @PostMapping("/courses/games")
     @ResponseStatus(HttpStatus.CREATED)
     public GameResponse createGame(@AuthenticationPrincipal String email, @RequestBody CreateGameRequest request) throws IOException {
-        return this.userService.createNewGame(email, request.getCourseName(), request.getTopicNames(), request.getGameName(),
-                request.getSubjectName(), request.getGameDurabilityMinutes(), request.getMaxTaskLevel(), request.getMinTaskLevel(), request.getStartDate());
+        return this.userService.createNewGame(email, request);
     }
 
     @GetMapping("/courses/games")
-    public List<GameResponse> getAllGamesForUser(@AuthenticationPrincipal String email, @AuthenticationPrincipal String [] authorities, @RequestParam String courseName){
-        return this.userService.getAllGamesOfUserInCourse(email, courseName, authorities[0]);
+    public List<GameResponse> getAllGamesForUser(@AuthenticationPrincipal String email, @RequestParam String courseName){
+       String authority = ((KnownAuthority) SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray()[0]).getAuthority();
+       return this.userService.getAllGamesOfUserInCourse(email, courseName, authority);
     }
 
     @PatchMapping("/courses")
@@ -73,8 +77,9 @@ public class UserController {
     }
 
     @GetMapping("/courses/")
-    public List<CourseResponse> getAllAvailableCourses(@AuthenticationPrincipal String email, @AuthenticationPrincipal String [] authorities){
-        return this.userService.getAllAvailableCourses(email, authorities[0]);
+    public List<CourseResponse> getAllAvailableCourses(@AuthenticationPrincipal String email){
+        String authority = ((KnownAuthority) SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray()[0]).getAuthority();
+        return this.userService.getAllAvailableCourses(email, authority);
     }
 
 

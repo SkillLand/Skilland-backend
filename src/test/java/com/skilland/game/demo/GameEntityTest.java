@@ -5,9 +5,11 @@ import com.skilland.game.demo.model.TopicEntity;
 import com.skilland.game.demo.model.gameroom.TaskEntity;
 import com.skilland.game.demo.repository.*;
 import com.skilland.game.demo.service.UserService;
+import com.skilland.game.demo.service.userDataReceiver.DataReceiverByUserAuthority;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -41,6 +43,9 @@ public class GameEntityTest {
 
     GameFileStorage gameFileStorage;
 
+    @Autowired
+    Map<String, DataReceiverByUserAuthority> dataReceiverByUserAuthorityMap;
+
 
     @Before
     public void setUp(){
@@ -56,7 +61,7 @@ public class GameEntityTest {
         studentRepository = mock(StudentRepository.class);
         teacherRepository = mock(TeacherRepository.class);
         userService = new UserService(userRepository, authorityRepository, passwordEncoder,
-                gameRepository, courseRepository, gameFileStorage, subjectTopicRepository, studentRepository, teacherRepository);
+                gameRepository, courseRepository, gameFileStorage, subjectTopicRepository, studentRepository, teacherRepository, dataReceiverByUserAuthorityMap);
     }
 
     @Test

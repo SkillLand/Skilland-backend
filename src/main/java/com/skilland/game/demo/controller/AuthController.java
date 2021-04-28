@@ -31,6 +31,7 @@ public class AuthController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @RequestBody(content = @Content(schema = @Schema(implementation = UserLoginRequest.class)))
     public UserLoginResponse login(@AuthenticationPrincipal UserDetails userDetails) {
+        System.out.println(userDetails);
         return authService.getToken(userDetails);
     }
 
