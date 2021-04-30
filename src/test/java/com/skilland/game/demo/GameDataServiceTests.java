@@ -2,13 +2,12 @@ package com.skilland.game.demo;
 
 
 import com.skilland.game.demo.repository.*;
-import com.skilland.game.demo.service.PrebuiltDataService;
+import com.skilland.game.demo.service.GamaDataService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
-public class PrebuiltDataServiceTests {
+public class GamaDataServiceTests {
 
 
     GameRepository gameRepository;
@@ -26,7 +25,7 @@ public class PrebuiltDataServiceTests {
 
     SubjectTopicRepository subjectTopicRepository;
 
-    PrebuiltDataService dataService;
+    GamaDataService dataService;
 
 
     @Before
@@ -34,8 +33,8 @@ public class PrebuiltDataServiceTests {
         courseRepository = mock(CourseRepository.class);
         gameRepository = mock(GameRepository.class);
         subjectTopicRepository = new SubjectTopicRepository();
-        dataService = new PrebuiltDataService(gameRepository, courseRepository,
-                 subjectTopicRepository);
+        dataService = new GamaDataService(userService, gameRepository, courseRepository,
+                 subjectTopicRepository, dataReceiverByUserAuthorityMap, gameFileStorage);
     }
 
     @Test
