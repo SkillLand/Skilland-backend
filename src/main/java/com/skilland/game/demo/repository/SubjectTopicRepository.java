@@ -61,8 +61,10 @@ public class SubjectTopicRepository {
         if (!topicFile.exists()){
             return Optional.empty();
         }
-        ObjectMapper objectMapper = new ObjectMapper();
-        TopicEntity topicEntity = objectMapper.readValue(topicFile, TopicEntity.class);
+
+        TopicEntity topicEntity = new TopicEntity();
+        topicEntity.setTopicName(topicName);
+        topicEntity.setSubjectName(subjectName);
         return Optional.of(topicEntity);
     }
 

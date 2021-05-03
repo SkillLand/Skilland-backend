@@ -25,20 +25,20 @@ public class StudentDataReceiver implements DataReceiverByUserAuthority{
     }
 
     @Override
-    public GameUserEntity createEmptyUser() {
+    public StudentEntity createEmptyUser() {
         return new StudentEntity();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public GameUserEntity getUserByEmail(String email) {
+    public StudentEntity getUserByEmail(String email) {
             return studentRepository.findByEmail(email)
                     .orElseThrow(() -> UserExceptions.userNotFound(email));
     }
 
     @Override
     public Set<CourseEntity> getAllCoursesOfUser(String email) {
-        StudentEntity studentEntity = (StudentEntity) this.getUserByEmail(email);
+        StudentEntity studentEntity = this.getUserByEmail(email);
         return studentEntity.getCoursesStudents();
     }
 
@@ -49,5 +49,10 @@ public class StudentDataReceiver implements DataReceiverByUserAuthority{
             return Optional.empty();
         }
         return studentEntity.getCoursesStudents().stream().filter((item) -> item.getTitle().equals(courseName)).findFirst();
+    }
+
+    @Override
+    public StudentEntity save(GameUserEntity studentEntity) {
+        return this.studentRepository.save((StudentEntity) studentEntity);
     }
 }

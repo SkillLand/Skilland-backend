@@ -16,5 +16,5 @@ public interface DataReceiverByUserAuthority {
     Set<CourseEntity> getAllCoursesOfUser(String email);
 
     Optional<CourseEntity> getCourseByEmailAndCourseName(String email, String courseName);
-
+    GameUserEntity save(GameUserEntity userEntity);
 }

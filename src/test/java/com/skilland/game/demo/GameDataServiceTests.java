@@ -1,31 +1,45 @@
 package com.skilland.game.demo;
 
 
+import com.skilland.game.demo.model.SubjectEntity;
+import com.skilland.game.demo.model.TopicEntity;
+import com.skilland.game.demo.model.gameroom.TaskEntity;
 import com.skilland.game.demo.repository.*;
-import com.skilland.game.demo.service.GamaDataService;
+import com.skilland.game.demo.service.GameDataService;
+import com.skilland.game.demo.service.UserService;
+import com.skilland.game.demo.service.userDataReceiver.DataReceiverByUserAuthority;
+import com.skilland.game.demo.service.userDataReceiver.StudentDataReceiver;
+import com.skilland.game.demo.service.userDataReceiver.TeacherDataReceiver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
-public class GamaDataServiceTests {
-
+@ContextConfiguration(classes = UserServiceSetUpConfig.class)
+public class GameDataServiceTests {
 
     GameRepository gameRepository;
 
     CourseRepository courseRepository;
 
-
     SubjectTopicRepository subjectTopicRepository;
 
-    GamaDataService dataService;
+    GameDataService dataService;
+
+    GameFileStorage gameFileStorage;
+
+
+    Map<String, DataReceiverByUserAuthority> dataReceiverByUserAuthorityMap;
 
 
     @Before
@@ -33,12 +47,55 @@ public class GamaDataServiceTests {
         courseRepository = mock(CourseRepository.class);
         gameRepository = mock(GameRepository.class);
         subjectTopicRepository = new SubjectTopicRepository();
-        dataService = new GamaDataService(userService, gameRepository, courseRepository,
+        subjectTopicRepository.setPathStart("src/test/recourses/Предметы/");
+        gameFileStorage = new GameFileStorage();
+        dataReceiverByUserAuthorityMap = new HashMap<>();
+        dataReceiverByUserAuthorityMap.put("ROLE_STUDENT", new StudentDataReceiver(mock(StudentRepository.class)));
+        dataReceiverByUserAuthorityMap.put("ROLE_TEACHER", new TeacherDataReceiver(mock(TeacherRepository.class)));
+        UserService userService = new UserService(mock(UserRepository.class), mock(UserAuthorityRepository.class), mock(PasswordEncoder.class),
+                dataReceiverByUserAuthorityMap);
+        dataService = new GameDataService(userService, gameRepository, courseRepository,
                  subjectTopicRepository, dataReceiverByUserAuthorityMap, gameFileStorage);
     }
 
     @Test
-    public void createNewSubjectTest(){
+    public void getSubjectAndTopicTests() throws IOException {
+        String presentSubjectName = "Алгебра";
+        String absentSubjectName = "123Алгебра";
+        SubjectEntity subjectEntity = this.subjectTopicRepository.findSubjectByName(presentSubjectName).get();
+        String presentTopicName = "Многочлены";
+        String absentTopicName = "123Многочлены";
+        TopicEntity topicEntity = this.subjectTopicRepository.findTopicByName(presentSubjectName, presentTopicName).get();
+        this.dataService.getSubjectByName(presentSubjectName);
+        assertThat(this.subjectTopicRepository.existsSubjectByName(presentSubjectName)).isEqualTo(true);
+        assertThat(this.subjectTopicRepository.existsSubjectByName(absentSubjectName)).isEqualTo(false);
+        assertThat(this.subjectTopicRepository.existsTopicByName(presentSubjectName, presentTopicName)).isEqualTo(true);
+        assertThat(this.subjectTopicRepository.existsTopicByName(presentSubjectName, absentTopicName)).isEqualTo(false);
+        assertThat(this.subjectTopicRepository.existsTopicByName(absentSubjectName, absentTopicName)).isEqualTo(false);
+
+    }
+
+
+
+    @Test
+    public void getRandomTaskOfComplexityTest() throws IOException {
+        String subjectName = "Алгебра";
+        List<String> topicNames = new ArrayList<>();
+        topicNames.add("Многочлены");
+        topicNames.add("Уравнения");
+        String level = "1";
+        Map<String, List<String>> topicTask = new HashMap<>();
+        topicTask.put(topicNames.get(0), new ArrayList<>());
+        topicTask.put(topicNames.get(1), new ArrayList<>());
+        while(true){
+            Optional<TaskEntity>taskEntity = this.subjectTopicRepository.getRandomTaskOfComplexity(subjectName, topicNames, level, topicTask);
+            if(taskEntity.isEmpty()) break;
+            System.out.println(taskEntity.get());
+        }
+    }
+
+    @Test
+    public void createNewSubjectTest() {
        /* String absentSubjectName = "math";
         String presentSubjectName = "physics";
         Subject subject = new Subject();
@@ -59,7 +116,7 @@ public class GamaDataServiceTests {
 
             Assert.assertNotEquals("", e.getMessage());
         }*/
-    }
+        //}
 
   /*
     public void createNewTopicTest(){
@@ -100,7 +157,7 @@ public class GamaDataServiceTests {
         }
     }*/
 
-    private void eraseTask(List<String> stringList){
+    /*private void eraseTask(List<String> stringList){
         stringList.remove(0);
     }
 
@@ -112,6 +169,6 @@ public class GamaDataServiceTests {
         System.out.println(stringList);
         eraseTask(stringList);
         System.out.println(stringList);
+    }*/
     }
-
 }

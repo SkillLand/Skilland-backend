@@ -9,14 +9,18 @@ import com.skilland.game.demo.model.gameroom.CourseEntity;
 import com.skilland.game.demo.model.gameroom.GameEntity;
 import com.skilland.game.demo.model.gameroom.GameJsonEntity;
 import com.skilland.game.demo.model.gameroom.req.CreateGameRequest;
+import com.skilland.game.demo.model.gameroom.resp.BriefCourseResponse;
 import com.skilland.game.demo.model.gameroom.resp.CourseResponse;
 import com.skilland.game.demo.model.gameroom.resp.GameResponse;
 import com.skilland.game.demo.model.gameroom.resp.NewCourseResponse;
 import com.skilland.game.demo.model.user.KnownAuthority;
 import com.skilland.game.demo.model.user.StudentEntity;
 import com.skilland.game.demo.model.user.TeacherEntity;
+import com.skilland.game.demo.model.user.resp.BriefUserResponse;
 import com.skilland.game.demo.repository.*;
 import com.skilland.game.demo.service.userDataReceiver.DataReceiverByUserAuthority;
+import com.skilland.game.demo.service.userDataReceiver.StudentDataReceiver;
+import com.skilland.game.demo.service.userDataReceiver.TeacherDataReceiver;
 import com.skilland.game.demo.util.GrigorianCalendarDateParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class GamaDataService {
+public class GameDataService {
 
     private final UserService userService;
 
@@ -45,7 +49,7 @@ public class GamaDataService {
 
 
     @Autowired
-    public GamaDataService(UserService userService, GameRepository gameRepository, CourseRepository courseRepository,
+    public GameDataService(UserService userService, GameRepository gameRepository, CourseRepository courseRepository,
                            SubjectTopicRepository subjectTopicRepository, Map<String, DataReceiverByUserAuthority> dataReceiverByUserAuthorityMap, GameFileStorage gameFileStorage) {
         this.userService = userService;
         this.gameRepository = gameRepository;
@@ -199,15 +203,33 @@ public class GamaDataService {
         StudentEntity studentEntity = (StudentEntity) dataReceiver.getUserByEmail(email);
         CourseEntity courseEntity = this.getCourseById(courseId);
         studentEntity.getCoursesStudents().add(courseEntity);
-        this.getDataReceiver(KnownAuthority.ROLE_STUDENT.getAuthority())studentRepository.save(studentEntity);
+        this.getDataReceiver(KnownAuthority.ROLE_STUDENT.getAuthority()).save(studentEntity);
         courseEntity.getStudents().add(studentEntity);
         this.courseRepository.save(courseEntity);
     }
 
-    public List<CourseResponse> getAllAvailableCourses(String email, String authority){
+    public List<BriefCourseResponse> getAllAvailableCourses(String email, String authority){
         DataReceiverByUserAuthority dataReceiver = this.getDataReceiver(authority);
         Set<CourseEntity> courseEntities = dataReceiver.getAllCoursesOfUser(email);
-        return courseEntities.stream().map((item)->new CourseResponse(item.getTitle())).collect(Collectors.toList());
+        return courseEntities.stream().map((item)->new BriefCourseResponse(item.getId(), item.getTitle())).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public CourseResponse deleteStudentFromCourse(String teacherEmail, String studentEmail, Long courseId){
+        DataReceiverByUserAuthority studentDataReceiver = getDataReceiver(KnownAuthority.ROLE_STUDENT.getAuthority());
+        DataReceiverByUserAuthority teacherDataReceiver = getDataReceiver(KnownAuthority.ROLE_TEACHER.getAuthority());
+        StudentEntity studentEntity = (StudentEntity) studentDataReceiver.getUserByEmail(studentEmail);
+        TeacherEntity teacherEntity = (TeacherEntity) teacherDataReceiver.getUserByEmail(studentEmail);
+        CourseResponse courseResponse = teacherEntity.getCoursesTeachers().stream()
+                .filter((item) -> item.getId() == courseId)
+                .peek((item) -> item.getStudents().remove(studentEntity))
+                .map((item) -> {
+                    List<BriefUserResponse> students = item.getStudents().stream().map(BriefUserResponse::fromUserEntity).collect(Collectors.toList());
+                    return new CourseResponse(item.getTitle(), students);
+                })
+                .findFirst()
+                .orElseThrow(()->GameDataException.courseNotFound(courseId.toString()));
+        return courseResponse;
     }
 
 

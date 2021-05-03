@@ -23,19 +23,19 @@ public class TeacherDataReceiver implements DataReceiverByUserAuthority{
 
 
     @Override
-    public GameUserEntity createEmptyUser() {
+    public TeacherEntity createEmptyUser() {
         return new TeacherEntity();
     }
 
     @Override
-    public GameUserEntity getUserByEmail(String email) {
+    public TeacherEntity getUserByEmail(String email) {
         return teacherRepository.findByEmail(email)
                 .orElseThrow(() -> UserExceptions.userNotFound(email));
     }
 
     @Override
     public Set<CourseEntity> getAllCoursesOfUser(String email) {
-        TeacherEntity teacherEntity = (TeacherEntity) this.getUserByEmail(email);
+        TeacherEntity teacherEntity = this.getUserByEmail(email);
         return teacherEntity.getCoursesTeachers();
     }
 
@@ -46,5 +46,10 @@ public class TeacherDataReceiver implements DataReceiverByUserAuthority{
             return Optional.empty();
         }
         return teacherEntity.getCoursesTeachers().stream().filter((item) -> item.getTitle().equals(courseName)).findFirst();
+    }
+
+    @Override
+    public TeacherEntity save(GameUserEntity teacherEntity) {
+        return this.teacherRepository.save((TeacherEntity) teacherEntity);
     }
 }
