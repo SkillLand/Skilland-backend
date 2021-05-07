@@ -25,26 +25,25 @@ public class CourseEntity {
     @JoinColumn(name = "teacher_id")
     private TeacherEntity teacher;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "courses_students", joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"))
     private Set<StudentEntity> students = new HashSet<>();
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<GameEntity> games = new HashSet<>();
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CourseEntity courseEntity = (CourseEntity) o;
-        return title.equals(courseEntity.title);
+        CourseEntity that = (CourseEntity) o;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title);
+        return Objects.hash(id);
     }
 
     @Override

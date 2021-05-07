@@ -214,12 +214,13 @@ public class GameDataService {
         return courseEntities.stream().map((item)->new BriefCourseResponse(item.getId(), item.getTitle())).collect(Collectors.toList());
     }
 
+
     @Transactional
     public CourseResponse deleteStudentFromCourse(String teacherEmail, String studentEmail, Long courseId){
         DataReceiverByUserAuthority studentDataReceiver = getDataReceiver(KnownAuthority.ROLE_STUDENT.getAuthority());
         DataReceiverByUserAuthority teacherDataReceiver = getDataReceiver(KnownAuthority.ROLE_TEACHER.getAuthority());
         StudentEntity studentEntity = (StudentEntity) studentDataReceiver.getUserByEmail(studentEmail);
-        TeacherEntity teacherEntity = (TeacherEntity) teacherDataReceiver.getUserByEmail(studentEmail);
+        TeacherEntity teacherEntity = (TeacherEntity) teacherDataReceiver.getUserByEmail(teacherEmail);
         CourseResponse courseResponse = teacherEntity.getCoursesTeachers().stream()
                 .filter((item) -> item.getId() == courseId)
                 .peek((item) -> item.getStudents().remove(studentEntity))
@@ -229,7 +230,27 @@ public class GameDataService {
                 })
                 .findFirst()
                 .orElseThrow(()->GameDataException.courseNotFound(courseId.toString()));
+        this.userService.save(teacherEntity);
         return courseResponse;
+    }
+
+    @Transactional
+    public void deleteCourseByTeacherAndCourseId(String teacherEmail, Long courseId){
+        CourseEntity courseEntity = this.getCourseById(courseId);
+        if (courseEntity.getTeacher().getEmail().equals(teacherEmail)){
+            this.courseRepository.deleteCourseEntityById(courseId);
+        }else throw GameDataException.courseNotFound(courseId.toString());
+    }
+
+    public List<BriefUserResponse> getCourseParticipantsOfTeacher(String teacherEmail, Long courseId){
+        CourseEntity courseEntity = this.getCourseById(courseId);
+        if(!courseEntity.getTeacher().getEmail().equals(teacherEmail)){
+            throw GameDataException.courseNotFound(courseId.toString());
+        }else
+            return courseEntity.getStudents().stream()
+                .map((item) -> new BriefUserResponse(item.getEmail(), item.getFirstName()))
+                .collect(Collectors.toList());
+
     }
 
 

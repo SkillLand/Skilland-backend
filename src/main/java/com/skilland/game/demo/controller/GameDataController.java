@@ -8,6 +8,7 @@ import com.skilland.game.demo.model.gameroom.resp.CourseResponse;
 import com.skilland.game.demo.model.gameroom.resp.GameResponse;
 import com.skilland.game.demo.model.gameroom.resp.NewCourseResponse;
 import com.skilland.game.demo.model.user.KnownAuthority;
+import com.skilland.game.demo.model.user.resp.BriefUserResponse;
 import com.skilland.game.demo.service.GameDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/api/v1")
 public class GameDataController {
 
     private final GameDataService dataService;
@@ -59,10 +61,20 @@ public class GameDataController {
         this.dataService.addStudentToCourse(email, request.getCourseId());
     }
 
-    @GetMapping("/courses/")
+    @GetMapping("/courses/participants")
+    public List<BriefUserResponse> getParticipantsOfCurrentCourse(@AuthenticationPrincipal String email, @RequestParam Long courseId){
+        return dataService.getCourseParticipantsOfTeacher(email, courseId);
+    }
+
+    @GetMapping("/courses")
     public List<BriefCourseResponse> getAllAvailableCourses(@AuthenticationPrincipal String email){
         String authority = ((KnownAuthority) SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray()[0]).getAuthority();
         return this.dataService.getAllAvailableCourses(email, authority);
+    }
+
+    @DeleteMapping("/courses")
+    public void deleteCourseOfTeacher(@AuthenticationPrincipal String email, @RequestParam Long courseId){
+        this.dataService.deleteCourseByTeacherAndCourseId(email, courseId);
     }
 
 
