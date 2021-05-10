@@ -1,2 +1,4 @@
-package com.skilland.game.demo.model.gameroom;public class StudentProgress {
+package com.skilland.game.demo.model.gameroom;
+
+public class StudentProgress {
 }

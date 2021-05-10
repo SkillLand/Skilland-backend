@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class TaskEntity {
+public class TaskJsonEntity {
 
     private String question;
     private String[]task_images;

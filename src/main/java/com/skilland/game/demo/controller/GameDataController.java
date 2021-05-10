@@ -77,5 +77,4 @@ public class GameDataController {
         this.dataService.deleteCourseByTeacherAndCourseId(email, courseId);
     }
 
-
 }

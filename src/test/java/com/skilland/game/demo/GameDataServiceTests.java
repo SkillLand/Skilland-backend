@@ -3,8 +3,13 @@ package com.skilland.game.demo;
 
 import com.skilland.game.demo.model.SubjectEntity;
 import com.skilland.game.demo.model.TopicEntity;
-import com.skilland.game.demo.model.gameroom.TaskEntity;
+import com.skilland.game.demo.model.gameroom.TaskJsonEntity;
+import com.skilland.game.demo.model.gameroom.TaskJsonEntityWrapper;
+import com.skilland.game.demo.model.gameroom.TopicLevel;
 import com.skilland.game.demo.repository.*;
+import com.skilland.game.demo.repository.game.GameFileStorage;
+import com.skilland.game.demo.repository.game.GameRepository;
+import com.skilland.game.demo.repository.student.StudentRepository;
 import com.skilland.game.demo.service.GameDataService;
 import com.skilland.game.demo.service.UserService;
 import com.skilland.game.demo.service.userDataReceiver.DataReceiverByUserAuthority;
@@ -13,13 +18,13 @@ import com.skilland.game.demo.service.userDataReceiver.TeacherDataReceiver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -83,14 +88,30 @@ public class GameDataServiceTests {
         List<String> topicNames = new ArrayList<>();
         topicNames.add("Многочлены");
         topicNames.add("Уравнения");
-        String level = "1";
-        Map<String, List<String>> topicTask = new HashMap<>();
-        topicTask.put(topicNames.get(0), new ArrayList<>());
-        topicTask.put(topicNames.get(1), new ArrayList<>());
+        String level1 = "1";
+        String level2 = "2";
+        Map<TopicLevel, List<String>> topicTask = new HashMap<>();
+        topicTask.put(new TopicLevel(topicNames.get(0), level1), new ArrayList<>());
+        topicTask.put(new TopicLevel(topicNames.get(1), level1), new ArrayList<>());
+        topicTask.put(new TopicLevel(topicNames.get(0), level2), new ArrayList<>());
+        topicTask.put(new TopicLevel(topicNames.get(1), level2), new ArrayList<>());
         while(true){
-            Optional<TaskEntity>taskEntity = this.subjectTopicRepository.getRandomTaskOfComplexity(subjectName, topicNames, level, topicTask);
+            Optional<TaskJsonEntityWrapper>taskEntity = this.subjectTopicRepository.getRandomTaskOfComplexity(subjectName, topicNames, level1, topicTask);
             if(taskEntity.isEmpty()) break;
-            System.out.println(taskEntity.get());
+            TaskJsonEntityWrapper taskJsonEntityWrapper = taskEntity.get();
+            TopicLevel topicLevel = new TopicLevel(taskJsonEntityWrapper.getTopicName(), taskJsonEntityWrapper.getLevel());
+            topicTask.get(topicLevel).add(taskJsonEntityWrapper.getTaskName());
+            System.out.println("CURRENT MAP STATE:" + topicTask);
+            System.out.println(taskJsonEntityWrapper.getTaskJsonEntity());
+        }
+        while(true){
+            Optional<TaskJsonEntityWrapper>taskEntity = this.subjectTopicRepository.getRandomTaskOfComplexity(subjectName, topicNames, level2, topicTask);
+            if(taskEntity.isEmpty()) break;
+            TaskJsonEntityWrapper taskJsonEntityWrapper = taskEntity.get();
+            TopicLevel topicLevel = new TopicLevel(taskJsonEntityWrapper.getTopicName(), taskJsonEntityWrapper.getLevel());
+            topicTask.get(topicLevel).add(taskJsonEntityWrapper.getTaskName());
+            System.out.println("CURRENT MAP STATE:" + topicTask);
+            System.out.println(taskJsonEntityWrapper.getTaskJsonEntity().getTips());
         }
     }
 

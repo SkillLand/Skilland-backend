@@ -1,10 +1,11 @@
 package com.skilland.game.demo.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skilland.game.demo.exception.GameDataException;
 import com.skilland.game.demo.model.SubjectEntity;
 import com.skilland.game.demo.model.TopicEntity;
-import com.skilland.game.demo.model.gameroom.TaskEntity;
+import com.skilland.game.demo.model.gameroom.TaskJsonEntity;
+import com.skilland.game.demo.model.gameroom.TaskJsonEntityWrapper;
+import com.skilland.game.demo.model.gameroom.TopicLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -69,14 +70,14 @@ public class SubjectTopicRepository {
     }
 
 
-    public Optional<TaskEntity> findTaskByNameAndLevel(String subjectName, String topicName, String level, String name) throws IOException {
+    public Optional<TaskJsonEntity> findTaskByNameAndLevel(String subjectName, String topicName, String level, String name) throws IOException {
         File taskFile  = new File(this.pathStart+"/"+subjectName+"/"+topicName + "/" + level + "/"+ name);
         if (!taskFile.exists()){
             return Optional.empty();
         }
         ObjectMapper objectMapper = new ObjectMapper();
-        TaskEntity taskEntity = objectMapper.readValue(taskFile, TaskEntity.class);
-        return Optional.of(taskEntity);
+        TaskJsonEntity taskJsonEntity = objectMapper.readValue(taskFile, TaskJsonEntity.class);
+        return Optional.of(taskJsonEntity);
 
     }
 
@@ -88,8 +89,8 @@ public class SubjectTopicRepository {
         return Optional.of(tasks.list());
     }
 
-    public Optional<TaskEntity> getRandomTaskOfComplexity(String subjectName, List<String> topicNames, String level,
-                                                          Map<String, List<String>> excludeTopicTasks) throws IOException {
+    public Optional<TaskJsonEntityWrapper> getRandomTaskOfComplexity(String subjectName, List<String> topicNames, String level,
+                                                                     Map<TopicLevel, List<String>> excludeTopicTasks) throws IOException {
         Random random = new Random();
         List<String>topicNamesCopy = new ArrayList<>(topicNames);
         while (!topicNamesCopy.isEmpty()) {
@@ -103,11 +104,11 @@ public class SubjectTopicRepository {
             while(tasks.size()!=0){
                 int taskNumber = random.nextInt(tasks.size());
                 String taskName = tasks.get(taskNumber);
-                if (excludeTopicTasks.containsKey(topicName) && excludeTopicTasks.get(topicName).contains(taskName)){
+                TopicLevel topicLevel = new TopicLevel(topicName, level);
+                if (excludeTopicTasks.containsKey(topicLevel) && excludeTopicTasks.get(topicLevel).contains(taskName)){
                     tasks.remove(taskName);
                 }else {
-                    excludeTopicTasks.get(topicName).add(taskName);
-                    return this.findTaskByNameAndLevel(subjectName, topicName, level, taskName);}
+                    return Optional.of(new TaskJsonEntityWrapper(this.findTaskByNameAndLevel(subjectName, topicName, level, taskName).get(), topicName, level, taskName));}
             }
             topicNamesCopy.remove(topicNumber);
 

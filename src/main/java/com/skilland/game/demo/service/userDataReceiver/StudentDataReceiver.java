@@ -5,12 +5,11 @@ import com.skilland.game.demo.exception.UserExceptions;
 import com.skilland.game.demo.model.gameroom.CourseEntity;
 import com.skilland.game.demo.model.user.GameUserEntity;
 import com.skilland.game.demo.model.user.StudentEntity;
-import com.skilland.game.demo.repository.StudentRepository;
+import com.skilland.game.demo.repository.student.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 

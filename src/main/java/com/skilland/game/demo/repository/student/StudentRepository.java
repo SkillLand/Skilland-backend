@@ -1,4 +1,4 @@
-package com.skilland.game.demo.repository;
+package com.skilland.game.demo.repository.student;
 
 import com.skilland.game.demo.model.user.StudentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

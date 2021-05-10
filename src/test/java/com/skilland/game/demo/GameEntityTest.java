@@ -1,8 +1,5 @@
 package com.skilland.game.demo;
 
-import com.skilland.game.demo.model.SubjectEntity;
-import com.skilland.game.demo.model.TopicEntity;
-import com.skilland.game.demo.model.gameroom.TaskEntity;
 import com.skilland.game.demo.model.user.GameUserEntity;
 import com.skilland.game.demo.model.user.KnownAuthority;
 import com.skilland.game.demo.model.user.TeacherEntity;
@@ -10,6 +7,7 @@ import com.skilland.game.demo.model.user.UserAuthority;
 import com.skilland.game.demo.model.user.request.SaveUserRequest;
 import com.skilland.game.demo.model.user.resp.UserResponse;
 import com.skilland.game.demo.repository.*;
+import com.skilland.game.demo.repository.student.StudentRepository;
 import com.skilland.game.demo.service.UserService;
 import com.skilland.game.demo.service.userDataReceiver.DataReceiverByUserAuthority;
 import com.skilland.game.demo.service.userDataReceiver.StudentDataReceiver;
@@ -17,11 +15,9 @@ import com.skilland.game.demo.service.userDataReceiver.TeacherDataReceiver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -27,14 +27,14 @@ public class MessageController {
         this.gameRoomService = gameRoomService;
     }
 
-    @MessageMapping("/game.addUser")
+    /*@MessageMapping("/game.addUser")
     public void addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
         gameRoomService.addUser(message.getFrom());
         Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("username", message.getFrom());
 
 
 
-    }
+    }*/
 
     @MessageMapping("/game")
     public void processMessage(@Payload Message message) {

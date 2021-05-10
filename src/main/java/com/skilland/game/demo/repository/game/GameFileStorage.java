@@ -1,8 +1,7 @@
-package com.skilland.game.demo.repository;
+package com.skilland.game.demo.repository.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skilland.game.demo.model.gameroom.GameJsonEntity;
-import com.skilland.game.demo.model.gameroom.TaskEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
