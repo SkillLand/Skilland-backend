@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -34,12 +36,26 @@ public class GameRoomService {
     }
 
 
-    public GameComplexEntity getGameById(Long gameId){
+    private GameComplexEntity getGameById(Long gameId){
         GameEntity gameEntity = gameRepository.getGameEntityById(gameId).orElseThrow(() -> GameDataException.gameNotFound(gameId.toString()));
         GameJsonEntity gameJsonEntity = gameFileStorage.findGameBySubjectAndId(gameEntity.getSubjectName(), gameId.toString())
                 .orElseThrow(() -> GameDataException.gameNotFound(gameId.toString()));
         return new GameComplexEntity(gameEntity.getId(), gameEntity.getDateTime(), gameEntity.getSubjectName(),
                 gameJsonEntity.getTopicNames(), gameJsonEntity.getMinTaskLevel(), gameJsonEntity.getMaxTaskLevel(), gameJsonEntity.getDurabilityMinutes());
+    }
+
+    private boolean gameTimeOverCheck(Long gameId){
+        GameComplexEntity gameComplexEntity = this.getGameById(gameId);
+        Instant now = Instant.now();
+        Instant endDate = gameComplexEntity.getDateTime().toInstant().plusSeconds(gameComplexEntity.getDurabilityMinutes() * 60L);
+        return now.isBefore(endDate);
+    }
+
+    private boolean gameStartedCheck(Long gameId){
+        GameEntity gameEntity = gameRepository.getGameEntityById(gameId).orElseThrow(() -> GameDataException.gameNotFound(gameId.toString()));
+        Instant instant = Instant.now();
+        Timestamp now = Timestamp.from(instant);
+        return gameEntity.getDateTime().before(now);
     }
 
     @Transactional
@@ -72,7 +88,6 @@ public class GameRoomService {
 
     }
 
-
     private void initExtraTopicLevelsForCompletedTasks( Map<TopicLevel, List<String>> completedTasks, String level, List<String> topicNames){
         for(String topicName: topicNames){
             TopicLevel topicLevel = new TopicLevel(topicName, level);
@@ -97,6 +112,12 @@ public class GameRoomService {
         return Optional.of(taskResponse);
     }
 
+    public void addNewStudentToGame(Long studentId, Long gameId){
+        if(!this.gameStartedCheck(gameId) || this.gameTimeOverCheck(gameId)){
+            // TODO throw http forbidden exception
+        }
+
+    }
 
 
     /*private final Set<GameUserEntity> gameUserEntities = new HashSet();

@@ -15,6 +15,9 @@ import java.util.List;
 @TypeDefs({
         @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 })
+@Entity
+@Table(name = "student_progress" +
+        "")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

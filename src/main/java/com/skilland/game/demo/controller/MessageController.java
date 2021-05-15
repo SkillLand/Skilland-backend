@@ -1,19 +1,13 @@
 package com.skilland.game.demo.controller;
 
-import com.skilland.game.demo.model.Message;
-import com.skilland.game.demo.model.OutputMessage;
+import com.skilland.game.demo.model.gameroom.message.HelloMessage;
+import com.skilland.game.demo.model.gameroom.message.Message;
 import com.skilland.game.demo.service.GameRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Objects;
 
 @Controller
 public class MessageController {
@@ -38,11 +32,14 @@ public class MessageController {
 
     @MessageMapping("/game")
     public void processMessage(@Payload Message message) {
-        String chatId = message.getChatId();
+        String chatId = message.getGameId().toString();
         this.messagingTemplate.convertAndSend("/topic/"+chatId, message);
+    }
 
-
-
+    @MessageMapping("/game")
+    public void processMessage(@Payload HelloMessage helloMessage) {
+        String chatId = helloMessage.getGameId().toString();
+        this.messagingTemplate.convertAndSend("/topic/"+chatId, helloMessage);
     }
 
     /*@MessageMapping("/conversation")

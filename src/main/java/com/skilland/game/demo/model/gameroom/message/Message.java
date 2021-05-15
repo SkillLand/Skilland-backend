@@ -1,23 +1,19 @@
-package com.skilland.game.demo.model;
+package com.skilland.game.demo.model.gameroom.message;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.*;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Getter
-@Setter
+@Data
 public class Message {
 
-    private String from;
-    private String text;
-    private String chatId;
-
-
-
+    private Boolean timeOver;
+    private Long gameId;
+    private List<MessageUserData> members;
 
 }
 
