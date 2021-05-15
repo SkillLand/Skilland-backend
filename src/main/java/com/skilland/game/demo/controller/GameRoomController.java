@@ -4,6 +4,8 @@ import com.skilland.game.demo.model.gameroom.message.HelloMessage;
 import com.skilland.game.demo.model.gameroom.message.Message;
 import com.skilland.game.demo.model.gameroom.resp.TaskResponse;
 import com.skilland.game.demo.service.GameRoomService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,12 @@ public class GameRoomController {
     }
 
     @GetMapping("/task")
-    public void getRandomTaskOfComplexity(@RequestParam Long studentId, @RequestParam Long gameId, @RequestParam Integer level) throws IOException {
+    public ResponseEntity<?> getRandomTaskOfComplexity(@RequestParam Long studentId, @RequestParam Long gameId, @RequestParam Integer level) throws IOException {
         Optional<TaskResponse> taskResponse = this.gameRoomService.getRandomTaskOfComplexity(studentId, gameId, level.toString());
+        if(taskResponse.isEmpty()){
+            return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        }else
+            return new ResponseEntity<>(taskResponse.get(), HttpStatus.OK);
     }
 
 }
