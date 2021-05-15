@@ -2,7 +2,14 @@ package com.skilland.game.demo.service;
 
 import com.skilland.game.demo.exception.GameDataException;
 import com.skilland.game.demo.model.gameroom.*;
+import com.skilland.game.demo.model.gameroom.jsonb.GameCurrentStateEntity;
+import com.skilland.game.demo.model.gameroom.jsonb.StudentProgressEntity;
+import com.skilland.game.demo.model.gameroom.message.Message;
+import com.skilland.game.demo.model.gameroom.message.MessageUserData;
 import com.skilland.game.demo.model.gameroom.resp.TaskResponse;
+import com.skilland.game.demo.model.user.GameUserEntity;
+import com.skilland.game.demo.model.user.StudentEntity;
+import com.skilland.game.demo.repository.game.GameCurrentStateRepository;
 import com.skilland.game.demo.repository.game.GameFileStorage;
 import com.skilland.game.demo.repository.game.GameRepository;
 import com.skilland.game.demo.repository.student.StudentProgressRepository;
@@ -27,12 +34,18 @@ public class GameRoomService {
 
     private final StudentProgressRepository studentProgressRepository;
 
+    private final GameCurrentStateRepository gameCurrentStateRepository;
+
+    private final UserService userService;
+
     @Autowired
-    public GameRoomService(GameRepository gameRepository, GameFileStorage gameFileStorage, SubjectTopicRepository subjectTopicRepository, StudentProgressRepository studentProgressRepository) {
+    public GameRoomService(GameRepository gameRepository, GameFileStorage gameFileStorage, SubjectTopicRepository subjectTopicRepository, StudentProgressRepository studentProgressRepository, GameCurrentStateRepository gameCurrentStateRepository, UserService userService) {
         this.gameRepository = gameRepository;
         this.gameFileStorage = gameFileStorage;
         this.subjectTopicRepository = subjectTopicRepository;
         this.studentProgressRepository = studentProgressRepository;
+        this.gameCurrentStateRepository = gameCurrentStateRepository;
+        this.userService = userService;
     }
 
 
@@ -48,7 +61,7 @@ public class GameRoomService {
         GameComplexEntity gameComplexEntity = this.getGameById(gameId);
         Instant now = Instant.now();
         Instant endDate = gameComplexEntity.getDateTime().toInstant().plusSeconds(gameComplexEntity.getDurabilityMinutes() * 60L);
-        return now.isBefore(endDate);
+        return !now.isBefore(endDate);
     }
 
     private boolean gameStartedCheck(Long gameId){
@@ -112,11 +125,24 @@ public class GameRoomService {
         return Optional.of(taskResponse);
     }
 
-    public void addNewStudentToGame(Long studentId, Long gameId){
+    public Message addNewStudentToGame(Long studentId, Long gameId){
         if(!this.gameStartedCheck(gameId) || this.gameTimeOverCheck(gameId)){
-            // TODO throw http forbidden exception
+            throw GameDataException.gameUnavailableException(gameId.toString());
         }
-
+        GameCurrentStateEntity gameCurrentStateEntity;
+        GameUserEntity gameUserEntity = userService.findById(studentId);
+        MessageUserData messageUserData = new MessageUserData(studentId, gameUserEntity.getFirstName(), 0, false);
+        List<GameCurrentStateEntity> messageUserDataCollection= this.gameCurrentStateRepository.findLatestRecordByGameId(gameId);
+        if(messageUserDataCollection.isEmpty()){
+            List<MessageUserData> messageUserDataList = new ArrayList<>();
+            messageUserDataList.add(messageUserData);
+            gameCurrentStateEntity = new GameCurrentStateEntity(null, false, Timestamp.from(Instant.now()), gameId, messageUserDataList);
+        }else{
+            gameCurrentStateEntity = messageUserDataCollection.get(0);
+            gameCurrentStateEntity.getMembers().add(messageUserData);
+        }
+        this.gameCurrentStateRepository.save(gameCurrentStateEntity);
+        return new Message(gameCurrentStateEntity.getTimeOver(), gameCurrentStateEntity.getGameId(), gameCurrentStateEntity.getMembers());
     }
 
 

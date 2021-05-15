@@ -31,16 +31,13 @@ public class MessageController {
     }*/
 
     @MessageMapping("/game")
-    public void processMessage(@Payload Message message) {
+    public void processMessage(@Payload HelloMessage helloMessage) {
+        Message message = this.gameRoomService.addNewStudentToGame(helloMessage.getMemberId(), helloMessage.getGameId());
         String chatId = message.getGameId().toString();
         this.messagingTemplate.convertAndSend("/topic/"+chatId, message);
     }
 
-    @MessageMapping("/game")
-    public void processMessage(@Payload HelloMessage helloMessage) {
-        String chatId = helloMessage.getGameId().toString();
-        this.messagingTemplate.convertAndSend("/topic/"+chatId, helloMessage);
-    }
+
 
     /*@MessageMapping("/conversation")
     @SendTo("/topic/anotherMessages")

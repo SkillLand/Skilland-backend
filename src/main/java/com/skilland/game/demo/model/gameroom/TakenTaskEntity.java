@@ -1,14 +1,12 @@
 package com.skilland.game.demo.model.gameroom;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class TakenTaskEntity {
 
     private String taskId;

@@ -104,6 +104,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email).map(UserResponse::fromUser);
     }
 
+    @Transactional(readOnly = true)
+    public GameUserEntity findById(Long id) {
+        return userRepository.findById(id).orElseThrow( () -> UserExceptions.userNotFound(id.toString()));
+    }
 
     private void validateUniqueFields(SaveUserRequest request) {
         String email = request.getEmail();
@@ -145,6 +149,8 @@ public class UserService implements UserDetailsService {
         authorities.put(KnownAuthority.ROLE_TEACHER, authority);
         return authorities;
     }
+
+
 
 
 }

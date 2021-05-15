@@ -31,4 +31,8 @@ public class GameDataException {
     public static ResponseStatusException topicAlreadyExists(String value){
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Topic "+value+" alreadyExists");
     }
+
+    public static ResponseStatusException gameUnavailableException(String gameId){
+        return new ResponseStatusException(HttpStatus.FORBIDDEN, "Game "+gameId+" is not available");
+    }
 }

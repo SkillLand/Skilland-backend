@@ -16,11 +16,11 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
-class StudentProgressRepositoryTest {
+public class StudentProgressRepositoryTest {
 
     StudentProgressRepository studentProgressRepository;
 
-    StudentProgressRepositoryTest(){
+    public StudentProgressRepositoryTest(){
         studentProgressRepository = mock(StudentProgressRepository.class);
     }
 
@@ -32,7 +32,7 @@ class StudentProgressRepositoryTest {
         List<TakenTaskEntity> takenTaskEntities = new ArrayList<>();
         takenTaskEntities.add(new TakenTaskEntity("1.JSON", "Многочлены", "1"));
         studentProgressEntity.setTakenTasks(takenTaskEntities);
-        when(studentProgressRepository.save(same(studentProgressEntity))).thenReturn(studentProgressEntity);
+        when(studentProgressRepository.save(studentProgressEntity)).thenReturn(studentProgressEntity);
         StudentProgressEntity result = this.studentProgressRepository.save(studentProgressEntity);
         System.out.println(result);
     }

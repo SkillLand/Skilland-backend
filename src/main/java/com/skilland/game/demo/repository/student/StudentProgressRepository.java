@@ -1,6 +1,6 @@
 package com.skilland.game.demo.repository.student;
 
-import com.skilland.game.demo.model.gameroom.StudentProgressEntity;
+import com.skilland.game.demo.model.gameroom.jsonb.StudentProgressEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

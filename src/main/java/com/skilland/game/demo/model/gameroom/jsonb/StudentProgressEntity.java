@@ -1,9 +1,11 @@
-package com.skilland.game.demo.model.gameroom;
+package com.skilland.game.demo.model.gameroom.jsonb;
 
+import com.skilland.game.demo.model.gameroom.TakenTaskEntity;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
@@ -16,11 +18,11 @@ import java.util.List;
         @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 })
 @Entity
-@Table(name = "student_progress" +
-        "")
+@Table(name = "student_progress")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class StudentProgressEntity {
 
     @Id

@@ -20,7 +20,7 @@
 
         function connect() {
 
-           chatId = document.getElementById('chatId').value;
+           gameId = document.getElementById('game_id').value;
            console.log(chatId);
 
             var socket = new SockJS('/game');
@@ -30,7 +30,7 @@
 
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/'+chatId, function(messageOutput) {
+                stompClient.subscribe('/topic/'+gameId, function(messageOutput) {
 
                     showMessageOutput(JSON.parse(messageOutput.body));
                 });
@@ -49,18 +49,17 @@
 
         function sendMessage() {
 
-            var from = document.getElementById('from').value;
-            var text = document.getElementById('text').value;
-            stompClient.send("/app/game", {}, JSON.stringify({'from':from, 'text':text, 'chatId': chatId}));
+            var memberId = document.getElementById('member_id').value;
+            var gameId = document.getElementById('game_id').value;
+            stompClient.send("/app/game", {}, JSON.stringify({'memberId':memberId, 'gameId':gameId,}));
         }
 
         function showMessageOutput(messageOutput) {
-            console.log('HELLO');
 
             var response = document.getElementById('response');
             var p = document.createElement('p');
             p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(messageOutput.from + ": " + messageOutput.text + " (" + messageOutput.time + ")"));
+            p.appendChild(document.createTextNode(messageOutput.timeOver + ": " + messageOutput.gameId + " (" + messageOutput.members + ")"));
             response.appendChild(p);
         }
 
@@ -74,8 +73,7 @@
 
 
     <div>
-        <input type="text" id="from" placeholder="Choose a nickname"/>
-        <input type="text" id="chatId" placeholder="Choose a chat"/>
+        <input type="text" id="game_id" placeholder="Choose a chat"/>
     </div>
     <br />
     <div>
@@ -84,7 +82,7 @@
     </div>
     <br />
     <div id="conversationDiv">
-        <input type="text" id="text" placeholder="Write a message..."/>
+        <input type="text" id="member_id" placeholder="write your id"/>
         <button id="sendMessage" onclick="sendMessage();">Send</button>
         <p id="response"></p>
     </div>
